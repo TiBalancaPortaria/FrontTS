@@ -12,20 +12,16 @@ import Barra_Menu from "./barra_menu";
         <Helmet>
           <title>Sistema Moreno</title>
         </Helmet>
-        <nav className="flex flex-row justify-between items-center h-screen bg-slate-400 dark:bg-gray-700">
-          <section className="w-1/2 flex flex-col gap-[5rem] mt-40 h-screen items-center">
-            <div className="flex items-center gap-20 flex-row justify-around">
-              <h1 className="text-3xl font-bold text-red-800 dark:text-red-600">
-                Sistema Moreno
-              </h1>
-              <ModeToggle />
-            </div>
-            <Barra_Menu />
-          </section>
-          <aside className="w-1/2">
-            <img src={logoMoreno} alt="" />
-          </aside>
-        </nav>
+        
+        <header className="bg-slate-400 dark:bg-gray-700 pl-2 pt-2 h-screen ">
+          <ModeToggle />
+          <nav className="flex flex-col items-center">
+            <section>
+            <img src={logoMoreno} alt="" className="w-[40rem]"/>
+              <Barra_Menu />
+            </section>
+          </nav>
+        </header>
       </>
     );
   }

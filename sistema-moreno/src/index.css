@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.Drop-Item{
+  @apply text-xl font-semibold cursor-pointer
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

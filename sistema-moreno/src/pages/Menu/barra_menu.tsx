@@ -1,61 +1,51 @@
-import {
-  Menubar,
-  MenubarCheckboxItem,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger,
-} from "@/components/ui/menubar"
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
+
 
 export default function Barra_Menu() {
   return (
-    <Menubar className="flex flex-col cursor-pointer w-60 h-auto">
-      <MenubarMenu >
-        <MenubarTrigger >Portaria</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            New Window <MenubarShortcut>⌘N</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>New Incognito Window</MenubarItem>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Share</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Email link</MenubarItem>
-              <MenubarItem>Messages</MenubarItem>
-              <MenubarItem>Notes</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>
-            Print... <MenubarShortcut>⌘P</MenubarShortcut>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>Administrador</MenubarTrigger>
-        <MenubarContent>
-          <MenubarRadioGroup value="benoit">
-            <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
-            <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
-            <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
-          </MenubarRadioGroup>
-          <MenubarSeparator />
-          <MenubarItem inset>Edit...</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Add Profile...</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
+    <div>
+      <nav className="flex flex-col gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className=" h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">Portaria</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel className="text-2xl">Portaria</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="Drop-Item">
+                Cartão Portaria
+              </DropdownMenuItem>
+              <DropdownMenuItem className="Drop-Item">
+                Visitantes
+              </DropdownMenuItem>
+              <DropdownMenuItem className="Drop-Item">
+                Fornecedores
+              </DropdownMenuItem>
+              <DropdownMenuItem className="Drop-Item">
+                Colaboradores Moreno
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="w-50 h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">Administrador</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel className="text-2xl">Administrador</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="Drop-Item">
+                Cartão Moreno
+              </DropdownMenuItem>
+              <DropdownMenuItem className="Drop-Item">
+                Colaboradores Moreno
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </nav>
+    </div>
   )
 }

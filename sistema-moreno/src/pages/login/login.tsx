@@ -22,8 +22,8 @@ export default function LoginPage(){
 
         try{
             await signIn ({email, password});
+            
             navigate('/menu')
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err){
             setError('Email ou senha invalidos');
         }
