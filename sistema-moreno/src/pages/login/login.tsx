@@ -54,14 +54,14 @@ export default function LoginPage(){
                         <Input
                         type="email"
                         placeholder="Email"
-                        className="w-[20rem] h-[3.125rem] font-mono text-xl focus:border-red-800"
+                        className="w-[20rem] h-[3.125rem] font-mono text-xl focus:border-red-800 border-black"
                         onChange={(e) => setEmail(e.target.value)}
                         />
 
                         <Input
                         type="password"
                         placeholder="Senha"
-                        className="w-[20rem] h-[3.125rem] font-mono text-xl focus:border-red-800"
+                        className="w-[20rem] h-[3.125rem] font-mono text-xl focus:border-red-800 border-black"
                         onChange={(e) => setPassword(e.target.value)}
                         />
                         
