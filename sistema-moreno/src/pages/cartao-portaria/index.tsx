@@ -1,10 +1,14 @@
+import { ModeToggle } from "@/components/mode-toggle";
 
 
 export const CartaoPortaria = () => {
    return (
-      <div>
-         <h1>Cartão Portaria</h1>
-         <p>Bem-vindo à página do Cartão Portaria!</p>
-      </div>
+      <main className="bg-gray-300 dark:bg-slate-700 min-h-screen">
+         <header className="relative flex items-center justify-center h-16 bg-gray-400 dark:bg-slate-800">
+            <div className="absolute left-2"><ModeToggle /></div>
+            <h1 className="text-3xl font-extrabold text-red-600">Cartão Portaria</h1>
+         </header>
+         
+      </main>
    );
 }

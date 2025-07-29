@@ -11,7 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/menu" element={<Menu/>} />
-          <Route path="/CartaoPortaria" element={<CartaoPortaria />} />
+          <Route path="/Portaria/CartaoPortaria" element={<CartaoPortaria />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

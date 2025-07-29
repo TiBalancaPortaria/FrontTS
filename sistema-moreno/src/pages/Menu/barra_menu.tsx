@@ -14,7 +14,7 @@ export default function Barra_Menu() {
     navigate('/CartaoPortaria');
 
     //!!!!!!!!ATIVAR ASSIM QUE ESTIVER TUDO PRONTO!!!!!!!!
-    
+
     // const token  = localStorage.getItem('token');
     // if (token){
     //   navigate('/CartaoPortaria');
@@ -35,7 +35,7 @@ export default function Barra_Menu() {
             <DropdownMenuLabel className="text-2xl">Portaria</DropdownMenuLabel>
             <DropdownMenuGroup>
               <DropdownMenuItem className="Drop-Item" onClick={handleCartaoPortariaClick}>
-                Cartão Portaria 
+                Cartão Portaria
               </DropdownMenuItem>
               <DropdownMenuItem className="Drop-Item">
                 Visitantes
