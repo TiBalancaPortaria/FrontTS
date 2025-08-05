@@ -11,7 +11,7 @@ export default function Barra_Menu() {
   // Isso será chamado quando o usuário clicar no item do menu
   const handleCartaoPortariaClick = () => {
 
-    navigate('/CartaoPortaria');
+    navigate('/Portaria/CartaoPortaria');
 
     //!!!!!!!!ATIVAR ASSIM QUE ESTIVER TUDO PRONTO!!!!!!!!
 
