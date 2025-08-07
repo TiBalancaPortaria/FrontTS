@@ -23,6 +23,10 @@ export default function Barra_Menu() {
     // }
   }
 
+  const handleCadColaboradoresClick = () => {
+    navigate('/rh/CadColaboradores');
+  }
+
 
   return (
     <div>
@@ -37,18 +41,15 @@ export default function Barra_Menu() {
               <DropdownMenuItem className="Drop-Item" onClick={handleCartaoPortariaClick}>
                 Cartão Portaria
               </DropdownMenuItem>
-              <DropdownMenuItem className="Drop-Item">
-                Visitantes
-              </DropdownMenuItem>
-              <DropdownMenuItem className="Drop-Item">
-                Fornecedores
-              </DropdownMenuItem>
+
               <DropdownMenuItem className="Drop-Item">
                 Colaboradores Moreno
               </DropdownMenuItem>
+
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="w-50 h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">Administrador</Button>
@@ -61,6 +62,20 @@ export default function Barra_Menu() {
               </DropdownMenuItem>
               <DropdownMenuItem className="Drop-Item">
                 Colaboradores Moreno
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="w-50 h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">RH</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel className="text-2xl">RH</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="Drop-Item" onClick={handleCadColaboradoresClick}>
+                Cadastro de Colaboradores
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
