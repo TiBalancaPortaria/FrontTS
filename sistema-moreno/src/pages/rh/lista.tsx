@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 interface Colaborador { // crio interface para tipar os colaboradores
   id: number;
@@ -33,6 +34,17 @@ export default function ListaColaboradores() {
     fetchColaboradores();
   }, []);
 
+  async function handleDelete(id: number) {
+    try {
+      await api.delete(`/api/Colaborador/${id}`);
+      setColaboradores(colaboradores.filter((colab) => colab.id !== id));
+    } catch (error) {
+      console.error("Erro ao excluir colaborador:", error);
+    }
+  }
+
+  
+
   return (
     <div className="p-6">
       <Table>
@@ -42,6 +54,7 @@ export default function ListaColaboradores() {
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Crachá</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Setor</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Responsável</TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -51,6 +64,14 @@ export default function ListaColaboradores() {
               <TableCell>{colab.cracha}</TableCell>
               <TableCell>{colab.setor}</TableCell>
               <TableCell>{colab.responsavel}</TableCell>
+              <TableCell className="flex gap-2">
+                <Button className="text-blue-500 hover:underline"
+                
+                >Editar</Button>
+                <Button className="text-red-500 hover:underline"
+                onClick={() => handleDelete(colab.id)}
+                >Excluir</Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -16,8 +16,8 @@ export default function DialogRegistro() {
    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setColaborador({
-         ...colaborador,
-         [name]: value
+         ...colaborador, // mantenho os valores anteriores
+         [name]: value // atualizo o campo específico
       });
    };
 
