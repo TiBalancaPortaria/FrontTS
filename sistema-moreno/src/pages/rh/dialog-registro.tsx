@@ -4,7 +4,7 @@ import { DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/compo
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
-export default function DialogRegistro() {
+export default function DialogRegistro({ onCadastro }: { onCadastro?: () => void }) {
 
    const [colaborador, setColaborador] = useState({
       nome: "",
@@ -19,6 +19,7 @@ export default function DialogRegistro() {
          ...colaborador, // mantenho os valores anteriores
          [name]: value // atualizo o campo específico
       });
+      
    };
 
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,6 +27,10 @@ export default function DialogRegistro() {
       try {
          await api.post("/api/Colaborador/", colaborador);
          alert("Colaborador cadastrado com sucesso!");
+         if (onCadastro) {
+            onCadastro(); // chama a função de callback se fornecida
+         }
+
          setColaborador({
             nome: "",
             cracha: "",

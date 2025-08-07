@@ -37,7 +37,7 @@ export default function ListaColaboradores() {
   async function handleDelete(id: number) {
     try {
       await api.delete(`/api/Colaborador/${id}`);
-      setColaboradores(colaboradores.filter((colab) => colab.id !== id));
+      setColaboradores(colaboradores.filter((colab) => colab.id !== id)); // atualizo o estado para remover o colaborador excluído
     } catch (error) {
       console.error("Erro ao excluir colaborador:", error);
     }
