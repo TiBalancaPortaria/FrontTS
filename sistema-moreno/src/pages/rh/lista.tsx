@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import EditarColaborador from "./dialog-editar";
 
 interface Colaborador { // crio interface para tipar os colaboradores
   id: number;
@@ -19,31 +20,29 @@ interface Colaborador { // crio interface para tipar os colaboradores
 }
 
 export default function ListaColaboradores() {
-  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]); // uso o useState para armazenar os colaboradores com tipagem Colaborador[]
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
+
+  const fetchColaboradores = async () => { // Função para buscar colaboradores
+    try {
+      const response = await api.get("/api/Colaborador/");
+      setColaboradores(response.data); // Atualiza o estado com os colaboradores recebidos
+    } catch (error) {
+      console.error("Erro ao buscar colaboradores:", error);
+    }
+  };
 
   useEffect(() => {
-    async function fetchColaboradores() {
-      try {
-        const response = await api.get("/api/Colaborador/");
-        setColaboradores(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar colaboradores:", error);
-      }
-    }
-
     fetchColaboradores();
   }, []);
 
   async function handleDelete(id: number) {
     try {
       await api.delete(`/api/Colaborador/${id}`);
-      setColaboradores(colaboradores.filter((colab) => colab.id !== id)); // atualizo o estado para remover o colaborador excluído
+      setColaboradores((prev) => prev.filter((colab) => colab.id !== id));
     } catch (error) {
       console.error("Erro ao excluir colaborador:", error);
     }
   }
-
-  
 
   return (
     <div className="p-6">
@@ -65,12 +64,16 @@ export default function ListaColaboradores() {
               <TableCell>{colab.setor}</TableCell>
               <TableCell>{colab.responsavel}</TableCell>
               <TableCell className="flex gap-2">
-                <Button className="text-blue-500 hover:underline"
-                
-                >Editar</Button>
-                <Button className="text-red-500 hover:underline"
-                onClick={() => handleDelete(colab.id)}
-                >Excluir</Button>
+                <EditarColaborador
+                  colaborador={colab}
+                  onAtualizar={fetchColaboradores} // ✅ Aqui atualiza a lista após edição
+                />
+                <Button
+                  className="text-red-500 hover:underline bg-white dark:bg-black"
+                  onClick={() => handleDelete(colab.id)}
+                >
+                  Excluir
+                </Button>
               </TableCell>
             </TableRow>
           ))}
