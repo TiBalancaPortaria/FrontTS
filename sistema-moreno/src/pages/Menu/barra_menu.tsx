@@ -26,7 +26,9 @@ export default function Barra_Menu() {
   const handleCadColaboradoresClick = () => {
     navigate('/rh/CadColaboradores');
   }
-
+  const handlePortariaColaboradoresClick = () => {
+    navigate('/Portaria/Colaboradores');
+  }
 
   return (
     <div>
@@ -42,7 +44,7 @@ export default function Barra_Menu() {
                 Cartão Portaria
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="Drop-Item">
+              <DropdownMenuItem className="Drop-Item" onClick={handlePortariaColaboradoresClick}>
                 Colaboradores Moreno
               </DropdownMenuItem>
 

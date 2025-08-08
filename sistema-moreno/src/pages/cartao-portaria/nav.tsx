@@ -1,5 +1,5 @@
 import { Dialog } from "@/components/ui/dialog";
-import CadEntrada from "./cadastro_entrada";
+import CadastroEntrada from "../colaboradores-portaria/cadastra";
 
 
 
@@ -8,7 +8,7 @@ export default function Nav() {
       <nav className="bg-gray-400 dark:bg-slate-700 p-4 flex relative justify-center items-center h-16">
          <div className="absolute left-5">
             <Dialog>
-               <CadEntrada />
+               <CadastroEntrada />
             </Dialog>
          </div>
          <div>

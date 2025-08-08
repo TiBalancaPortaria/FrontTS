@@ -19,7 +19,8 @@ interface Colaborador { // crio interface para tipar os colaboradores
   responsavel: string;
 }
 
-export default function ListaColaboradores() {
+export default function ListaColaboradores({ filter }: { filter: string }) {
+
   const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
 
   const fetchColaboradores = async () => { // Função para buscar colaboradores
@@ -44,6 +45,10 @@ export default function ListaColaboradores() {
     }
   }
 
+  const filteredColaboradores = colaboradores.filter((colab) => // para filtrar por nomes
+    colab.nome.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
     <div className="p-6">
       <Table>
@@ -57,7 +62,7 @@ export default function ListaColaboradores() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {colaboradores.map((colab) => (
+          {filteredColaboradores.map((colab) => (
             <TableRow key={colab.id}>
               <TableCell>{colab.nome}</TableCell>
               <TableCell>{colab.cracha}</TableCell>
