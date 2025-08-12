@@ -1,5 +1,6 @@
 import { ModeToggle } from "@/components/mode-toggle";
 import Nav from "../cartao-portaria/nav";
+import ListaDeEntradas from "./lista";
 
 
 
@@ -11,7 +12,7 @@ export const ColaboradoresPortaria = () => {
             <h1 className="text-3xl font-extrabold text-red-600">Entrada Colaboradores</h1>
          </header>
          <Nav />
-         
+         <ListaDeEntradas />
       </main>
    );
 }
