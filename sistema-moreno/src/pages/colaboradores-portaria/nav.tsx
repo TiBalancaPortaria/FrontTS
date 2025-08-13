@@ -1,14 +1,19 @@
 import { Dialog } from "@/components/ui/dialog";
-import CadastroEntrada from "../colaboradores-portaria/cadastra";
+import CadastroEntrada from "./cadastra";
+
+interface NavProps {
+   onEntradaCadastrada: () => void;
+}
 
 
+export default function Nav({onEntradaCadastrada}: NavProps) {
+   
 
-export default function Nav() {
    return (
       <nav className="bg-gray-400 dark:bg-slate-700 p-4 flex relative justify-center items-center h-16">
          <div className="absolute left-5">
             <Dialog>
-               <CadastroEntrada />
+               <CadastroEntrada onEntradaCadastrada={onEntradaCadastrada} />
             </Dialog>
          </div>
          <div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import api from "@/axios/api";
+
+import type { Entrada } from "@/@types/types-entrada";
 import {
   Table,
   TableBody,
@@ -9,38 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface Colaborador {
-  id: number;
-  nome: string;
-  cracha: string;
-  setor: string;
-  responsavel: string;
+interface ListaDeEntradasProps {
+  entradas: Entrada[];
 }
 
-interface Entrada {
-  id: number;
-  colaborador: Colaborador | null;
-  colaborador_id: number;
-  motivo: string;
-  data_entrada: string;
-  data_saida: string | null;
-}
-
-export default function ListaDeEntradas() {
-  const [entradas, setEntradas] = useState<Entrada[]>([]);
-
-  const fetchEntradas = async () => {
-    try {
-      const response = await api.get("/api/Port_Colaborador/");
-      setEntradas(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar entradas:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchEntradas();
-  }, []);
+export default function ListaDeEntradas({ entradas }: ListaDeEntradasProps) {
 
   return (
     <div className="p-6">
@@ -62,9 +35,7 @@ export default function ListaDeEntradas() {
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">
               Motivo
             </TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">
-              Ações
-            </TableHead>
+            
           </TableRow>
         </TableHeader>
         <TableBody>

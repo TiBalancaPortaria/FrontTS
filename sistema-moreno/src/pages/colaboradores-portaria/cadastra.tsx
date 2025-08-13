@@ -13,8 +13,13 @@ interface Colaborador {
   id: number;
   nome: string;
 }
+interface CadastroEntradaProps {
+  onEntradaCadastrada: () => void;
+}
 
-export default function CadastroEntrada() {
+export default function CadastroEntrada({onEntradaCadastrada}: CadastroEntradaProps) {
+
+
   const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
   const [colaboradorIdSelecionado, setColaboradorIdSelecionado] = useState("");
   const [dataEntrada, setDataEntrada] = useState("");
@@ -44,16 +49,20 @@ export default function CadastroEntrada() {
     }
 
     try {
+      const dataEntradaISO = dataEntrada ? new Date(dataEntrada).toISOString() : new Date().toISOString();
+
       const response = await api.post("/api/Port_Colaborador/", {
          colaborador_id: colaboradorIdSelecionado,
          motivo: motivo,
-         data_entrada: new Date().toISOString(), // Usando a data atual
+         data_entrada: dataEntradaISO, // Usando a data atual
       });
       console.log("Entrada cadastrada:", response.data);
       alert("Entrada cadastrada com sucesso!");
       setColaboradorIdSelecionado("");
       setMotivo("");
       setDataEntrada("");
+
+      onEntradaCadastrada(); // Chama a função para atualizar a lista de entradas
     } catch (error) {
       console.error("Erro ao cadastrar entrada:", error);
       alert("Erro ao cadastrar entrada.");

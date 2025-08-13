@@ -1,5 +1,5 @@
 import { ModeToggle } from "@/components/mode-toggle";
-import Nav from "./nav";
+import Nav from "../colaboradores-portaria/nav";
 
 
 export const CartaoPortaria = () => {
