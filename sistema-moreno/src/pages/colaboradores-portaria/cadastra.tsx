@@ -13,15 +13,15 @@ interface Colaborador {
   id: number;
   nome: string;
 }
+
 interface CadastroEntradaProps {
   onEntradaCadastrada: () => void;
 }
 
-export default function CadastroEntrada({onEntradaCadastrada}: CadastroEntradaProps) {
-
-
+export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntradaProps) {
   const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
-  const [colaboradorIdSelecionado, setColaboradorIdSelecionado] = useState("");
+  const [colaboradorIdSelecionado, setColaboradorIdSelecionado] = useState<number | null>(null);
+  const [buscaColaborador, setBuscaColaborador] = useState("");
   const [dataEntrada, setDataEntrada] = useState("");
   const [motivo, setMotivo] = useState("");
 
@@ -35,34 +35,37 @@ export default function CadastroEntrada({onEntradaCadastrada}: CadastroEntradaPr
         console.error("Erro ao buscar colaboradores:", error);
       }
     }
-
     fetchColaboradores();
   }, []);
 
-  // Enviar formulário
+  const colaboradoresFiltrados = colaboradores.filter((colab) =>
+    colab.nome.toLowerCase().includes(buscaColaborador.toLowerCase())
+  );
+
+  const handleSelectColaborador = (colab: Colaborador) => {
+    setColaboradorIdSelecionado(colab.id);
+    setBuscaColaborador(colab.nome);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!colaboradorIdSelecionado) {
       alert("Selecione um colaborador.");
       return;
     }
-
     try {
       const dataEntradaISO = dataEntrada ? new Date(dataEntrada).toISOString() : new Date().toISOString();
-
-      const response = await api.post("/api/Port_Colaborador/", {
-         colaborador_id: colaboradorIdSelecionado,
-         motivo: motivo,
-         data_entrada: dataEntradaISO, // Usando a data atual
+      await api.post("/api/Port_Colaborador/", {
+        colaborador_id: colaboradorIdSelecionado,
+        motivo: motivo,
+        data_entrada: dataEntradaISO,
       });
-      console.log("Entrada cadastrada:", response.data);
       alert("Entrada cadastrada com sucesso!");
-      setColaboradorIdSelecionado("");
+      setColaboradorIdSelecionado(null);
+      setBuscaColaborador("");
       setMotivo("");
       setDataEntrada("");
-
-      onEntradaCadastrada(); // Chama a função para atualizar a lista de entradas
+      onEntradaCadastrada();
     } catch (error) {
       console.error("Erro ao cadastrar entrada:", error);
       alert("Erro ao cadastrar entrada.");
@@ -79,19 +82,29 @@ export default function CadastroEntrada({onEntradaCadastrada}: CadastroEntradaPr
           <DialogTitle>Cadastrar Entrada</DialogTitle>
           <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
             <label>Nome:</label>
-            <select
-               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
-              value={colaboradorIdSelecionado}
-              onChange={(e) => setColaboradorIdSelecionado(e.target.value)}
-              required
-            >
-              <option value="">Selecione um colaborador</option>
-              {colaboradores.map((colab) => (
-                <option key={colab.id} value={colab.id}>
-                  {colab.nome}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <Input
+                type="text"
+                value={buscaColaborador}
+                onChange={(e) => setBuscaColaborador(e.target.value)}
+                placeholder="Digite para buscar..."
+                className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
+                required
+              />
+              {buscaColaborador && colaboradoresFiltrados.length > 0 && (
+                <ul className="absolute z-10 bg-white dark:bg-gray-950 border w-full mt-1 max-h-40 overflow-auto rounded shadow">
+                  {colaboradoresFiltrados.map((colab) => (
+                    <li
+                      key={colab.id}
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                      onClick={() => handleSelectColaborador(colab)}
+                    >
+                      {colab.nome}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             <label>Motivo:</label>
             <Input

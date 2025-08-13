@@ -49,6 +49,17 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
     colab.nome.toLowerCase().includes(filter.toLowerCase())
   );
 
+  const [itensVisiveis, setItensVisiveis] = useState(12);
+
+  const loadMore = () => {
+    setItensVisiveis((prev) => prev + 12);
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 100);
+  };
+
+  const colaboradoresVisiveis = filteredColaboradores.slice(0, itensVisiveis);
+
   return (
     <div className="p-6">
       <Table>
@@ -62,7 +73,7 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredColaboradores.map((colab) => (
+          {colaboradoresVisiveis.map((colab) => (
             <TableRow key={colab.id}>
               <TableCell>{colab.nome}</TableCell>
               <TableCell>{colab.cracha}</TableCell>
@@ -84,6 +95,18 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
           ))}
         </TableBody>
       </Table>
+
+        {itensVisiveis < filteredColaboradores.length && (
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={loadMore}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Carregar mais
+            </button>
+          </div>
+        )}
+
     </div>
   );
 }

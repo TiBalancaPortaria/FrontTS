@@ -9,6 +9,8 @@ import type { Entrada } from "@/@types/types-entrada";
 export const ColaboradoresPortaria = () => {
 
    const [entradas, setEntradas] = useState<Entrada[]>([]);
+   const [filtro, setFiltro] = useState("");
+
 
    const fetchEntradas = async () => {
       try{
@@ -29,8 +31,10 @@ export const ColaboradoresPortaria = () => {
             <div className="absolute left-2"><ModeToggle /></div>
             <h1 className="text-3xl font-extrabold text-red-600">Entrada Colaboradores</h1>
          </header>
-         <Nav onEntradaCadastrada={fetchEntradas} />
-         <ListaDeEntradas entradas={entradas} />
+         <Nav filtro={filtro} setFiltro={setFiltro} onEntradaCadastrada={fetchEntradas} />
+         <ListaDeEntradas entradas={entradas.filter(
+            entrada => entrada.colaborador?.nome.toLowerCase().includes(filtro.toLowerCase()))} 
+         onAtualizar={fetchEntradas} />
       </main>
    );
 }
