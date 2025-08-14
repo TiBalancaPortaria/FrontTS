@@ -5,6 +5,7 @@ import Menu from "./pages/Menu";
 import { CartaoPortaria } from "./pages/cartao-portaria";
 import CadColaborador from "./pages/rh/cadColaborador";
 import { ColaboradoresPortaria } from "./pages/colaboradores-portaria";
+import ConsultaEntradas from "./pages/rh/consulta-entrada";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/Portaria/CartaoPortaria" element={<CartaoPortaria />} />
           <Route path="/Portaria/Colaboradores" element={<ColaboradoresPortaria />} />
           <Route path="/rh/CadColaboradores" element={<CadColaborador />} />
+          <Route path="/rh/ConsultaEntradas" element={<ConsultaEntradas />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

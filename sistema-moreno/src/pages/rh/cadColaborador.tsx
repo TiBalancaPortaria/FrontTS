@@ -29,7 +29,7 @@ export default function CadColaborador() {
 
    return (
       <>
-       <main className="bg-slate-300 dark:bg-gray-500 h-screen">
+       <main className="bg-slate-300 dark:bg-gray-500 h-full">
          <nav className="bg-gray-400 dark:bg-slate-700 p-4 flex relative justify-center items-center h-16">
             <div className="absolute left-5">
                <ModeToggle />
@@ -42,9 +42,9 @@ export default function CadColaborador() {
             </div>
          </nav>
          <div className="flex flex-row items-center justify-center mt-4">
-            <Dialog>
+            {/* <Dialog>
                <DialogRegistro />
-            </Dialog>
+            </Dialog> */}
             <Input placeholder="Pesquisar" className="mx-2 w-1/2 border-black" 
             value={filter}
             onChange={(e) => setFilter(e.target.value)}

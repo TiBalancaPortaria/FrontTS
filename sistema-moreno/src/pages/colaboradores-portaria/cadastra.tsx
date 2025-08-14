@@ -22,7 +22,8 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
   const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
   const [colaboradorIdSelecionado, setColaboradorIdSelecionado] = useState<number | null>(null);
   const [buscaColaborador, setBuscaColaborador] = useState("");
-  const [dataEntrada, setDataEntrada] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [horarioRegistrado, setHorarioRegistrado] = useState("");
   const [motivo, setMotivo] = useState("");
 
   // Buscar colaboradores
@@ -49,25 +50,39 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validações
     if (!colaboradorIdSelecionado) {
       alert("Selecione um colaborador.");
       return;
     }
+    if (!tipo){
+      alert("Selecione um tipo de registro.");
+      return;
+    }
+    if (!horarioRegistrado) {
+      alert("Informe o horário de registro.");
+      return;
+    }
+
     try {
-      const dataEntradaISO = dataEntrada ? new Date(dataEntrada).toISOString() : new Date().toISOString();
       await api.post("/api/Port_Colaborador/", {
         colaborador_id: colaboradorIdSelecionado,
         motivo: motivo,
-        data_entrada: dataEntradaISO,
+        tipo: tipo,
+        horario_registrado: new Date(horarioRegistrado).toISOString()
       });
-      alert("Entrada cadastrada com sucesso!");
+
+      alert("Registro salvo com sucesso!");
+      // Resetar campos
       setColaboradorIdSelecionado(null);
       setBuscaColaborador("");
       setMotivo("");
-      setDataEntrada("");
+      setTipo("");
+      setHorarioRegistrado("");
       onEntradaCadastrada();
-    } catch (error) {
-      console.error("Erro ao cadastrar entrada:", error);
+    } catch (error: any) {
+      console.error("Erro ao cadastrar:", error.response?.data);
       alert("Erro ao cadastrar entrada.");
     }
   };
@@ -89,7 +104,6 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
                 onChange={(e) => setBuscaColaborador(e.target.value)}
                 placeholder="Digite para buscar..."
                 className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
-                required
               />
               {buscaColaborador && colaboradoresFiltrados.length > 0 && (
                 <ul className="absolute z-10 bg-white dark:bg-gray-950 border w-full mt-1 max-h-40 overflow-auto rounded shadow">
@@ -114,14 +128,27 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
               required
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             />
-            <label>Entrada:</label>
+
+            <label>Horário:</label>
             <Input
               type="datetime-local"
-              value={dataEntrada}
-              onChange={(e) => setDataEntrada(e.target.value)}
+              value={horarioRegistrado}
+              onChange={(e) => setHorarioRegistrado(e.target.value)}
               required
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             />
+
+            <label>Tipo:</label>
+            <select
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
+              required
+              className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
+            >
+              <option value="">Selecione um tipo</option>
+              <option value="entrada">Entrada</option>
+              <option value="saida">Saída</option>
+            </select>
 
             <Button type="submit">Salvar</Button>
           </form>

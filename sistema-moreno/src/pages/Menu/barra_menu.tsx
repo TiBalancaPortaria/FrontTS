@@ -79,6 +79,9 @@ export default function Barra_Menu() {
               <DropdownMenuItem className="Drop-Item" onClick={handleCadColaboradoresClick}>
                 Cadastro de Colaboradores
               </DropdownMenuItem>
+              <DropdownMenuItem className="Drop-Item" onClick={() => navigate('/rh/ConsultaEntradas')}>
+                Consulta de Entradas
+              </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

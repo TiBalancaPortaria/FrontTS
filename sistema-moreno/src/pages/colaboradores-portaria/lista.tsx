@@ -15,12 +15,11 @@ import { useState } from "react";
 
 interface ListaDeEntradasProps {
   entradas: Entrada[];
-  onAtualizar: () => void;
 
 }
 
 
-export default function ListaDeEntradas({ entradas, onAtualizar }: ListaDeEntradasProps) {
+export default function ListaDeEntradas({ entradas}: ListaDeEntradasProps) {
 
 
 const [itensVisiveis, setItensVisiveis] = useState(12);
@@ -35,19 +34,7 @@ const loadMore = () => {
 
 const entradasVisiveis = entradas.slice(0, itensVisiveis);
 
-async function registrarSaida(id: number) {
-  try {
-    const response = await api.post(`/api/Port_Colaborador/${id}/registrar_saida/`);
-    console.log("Saída registrada com sucesso:", response.data);
-    alert("Saída registrada com sucesso!");
-    // Aqui você pode atualizar a lista de entradas
-    onAtualizar();
 
-  } catch (error) {
-    console.error("Erro ao registrar saída:", error);
-    alert("Erro ao registrar saída");
-  }
-}
 
 
   return (
@@ -62,16 +49,13 @@ async function registrarSaida(id: number) {
               Data
             </TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">
-              Hora Entrada
+              Hora
             </TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">
-              Hora Saída
+              Tipo
             </TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">
               Motivo
-            </TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">
-              Ações
             </TableHead>
             
           </TableRow>
@@ -83,27 +67,20 @@ async function registrarSaida(id: number) {
                 {entrada.colaborador?.nome ?? "Desconhecido"}
               </TableCell>
               <TableCell className="text-gray-600 dark:text-gray-300">
-                {entrada.data_entrada
-                  ? new Date(entrada.data_entrada).toLocaleDateString()
+                {entrada.horario_registrado
+                  ? new Date(entrada.horario_registrado).toLocaleDateString()
                   : "—"}
               </TableCell>
               <TableCell className="text-gray-600 dark:text-gray-300">
-                {entrada.data_entrada
-                  ? new Date(entrada.data_entrada).toLocaleTimeString()
+                {entrada.horario_registrado
+                  ? new Date(entrada.horario_registrado).toLocaleTimeString()
                   : "—"}
               </TableCell>
                <TableCell>
-                  {entrada.data_saida
-                     ? new Date(entrada.data_saida).toLocaleTimeString()
-                     : "—"}
+                  {entrada.tipo ?? "-"}
                </TableCell>
               <TableCell className="text-gray-600 dark:text-gray-300">
                 {entrada.motivo}
-              </TableCell>
-              <TableCell className="text-gray-600 dark:text-gray-300">
-                <Button onClick={() => registrarSaida(entrada.id)}>
-                  Registrar Saída
-                </Button>
               </TableCell>
 
             </TableRow>

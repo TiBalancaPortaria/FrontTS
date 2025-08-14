@@ -9,8 +9,7 @@ export interface Colaborador {
 export interface Entrada {
   id: number;
   colaborador: Colaborador | null;
-  colaborador_id: number;
   motivo: string;
-  data_entrada: string;
-  data_saida: string | null;
+  horario_registrado: string;
+  tipo: string;
 }

@@ -9,44 +9,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import EditarColaborador from "./dialog-editar";
 
-interface Colaborador { // crio interface para tipar os colaboradores
-  id: number;
-  nome: string;
-  cracha: string;
-  setor: string;
-  responsavel: string;
+interface Funcionario {
+  fun_chapa: string;
+  fun_nome: string;
 }
 
 export default function ListaColaboradores({ filter }: { filter: string }) {
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
 
-  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
-
-  const fetchColaboradores = async () => { // Função para buscar colaboradores
+  const fetchFuncionarios = async () => {
     try {
-      const response = await api.get("/api/Colaborador/");
-      setColaboradores(response.data); // Atualiza o estado com os colaboradores recebidos
+      const response = await api.get("/api/rhfuncionarios/");
+      setFuncionarios(response.data);
     } catch (error) {
-      console.error("Erro ao buscar colaboradores:", error);
+      console.error("Erro ao buscar Funcionarios:", error);
     }
   };
 
   useEffect(() => {
-    fetchColaboradores();
+    fetchFuncionarios();
   }, []);
 
-  async function handleDelete(id: number) {
-    try {
-      await api.delete(`/api/Colaborador/${id}`);
-      setColaboradores((prev) => prev.filter((colab) => colab.id !== id));
-    } catch (error) {
-      console.error("Erro ao excluir colaborador:", error);
-    }
-  }
-
-  const filteredColaboradores = colaboradores.filter((colab) => // para filtrar por nomes
-    colab.nome.toLowerCase().includes(filter.toLowerCase())
+  const filteredFuncionarios = funcionarios.filter((f) =>
+    f.fun_nome.toLowerCase().includes(filter.toLowerCase())
   );
 
   const [itensVisiveis, setItensVisiveis] = useState(12);
@@ -58,7 +44,7 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
     }, 100);
   };
 
-  const colaboradoresVisiveis = filteredColaboradores.slice(0, itensVisiveis);
+  const colaboradoresVisiveis = filteredFuncionarios.slice(0, itensVisiveis);
 
   return (
     <div className="p-6">
@@ -67,46 +53,23 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
           <TableRow className="bg-gray-400 dark:bg-gray-600">
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Nome</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Crachá</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Setor</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Responsável</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {colaboradoresVisiveis.map((colab) => (
-            <TableRow key={colab.id}>
-              <TableCell>{colab.nome}</TableCell>
-              <TableCell>{colab.cracha}</TableCell>
-              <TableCell>{colab.setor}</TableCell>
-              <TableCell>{colab.responsavel}</TableCell>
-              <TableCell className="flex gap-2">
-                <EditarColaborador
-                  colaborador={colab}
-                  onAtualizar={fetchColaboradores} // ✅ Aqui atualiza a lista após edição
-                />
-                <Button
-                  className="text-red-500 hover:underline bg-white dark:bg-black"
-                  onClick={() => handleDelete(colab.id)}
-                >
-                  Excluir
-                </Button>
-              </TableCell>
+          {colaboradoresVisiveis.map((funcionario) => (
+            <TableRow key={funcionario.fun_chapa} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+              <TableCell className="text-gray-700 dark:text-gray-200">{funcionario.fun_nome}</TableCell>
+              <TableCell className="text-gray-700 dark:text-gray-200">{funcionario.fun_chapa}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-        {itensVisiveis < filteredColaboradores.length && (
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={loadMore}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Carregar mais
-            </button>
-          </div>
-        )}
-
+      {itensVisiveis < filteredFuncionarios.length && (
+        <div className="flex justify-center mt-4">
+          <Button onClick={loadMore}>Carregar mais</Button>
+        </div>
+      )}
     </div>
   );
 }
