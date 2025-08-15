@@ -35,7 +35,7 @@ export default function ConsultaEntradas() {
   // Buscar entradas do backend
   const fetchEntradas = async () => {
     try {
-      const response = await api.get("/api/Port_Colaborador/");
+      const response = await api.get("/api/portariaColaborador/");
       setEntradas(response.data);
     } catch (error) {
       console.error("Erro ao buscar entradas:", error);
@@ -97,8 +97,8 @@ export default function ConsultaEntradas() {
         <TableHeader>
           <TableRow className="bg-gray-400 dark:bg-gray-600">
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Colaborador</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Data Escolhida</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Hora Escolhida</TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Data</TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Hora</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Data do Registro</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Tipo</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Motivo</TableHead>

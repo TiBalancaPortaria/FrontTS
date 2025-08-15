@@ -1,6 +1,4 @@
 import { ModeToggle } from "@/components/mode-toggle";
-import { Dialog } from "@/components/ui/dialog";
-import DialogRegistro from "./dialog-registro";
 import ListaColaboradores from "./lista";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";

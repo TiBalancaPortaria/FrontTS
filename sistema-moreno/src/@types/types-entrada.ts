@@ -8,8 +8,11 @@ export interface Colaborador {
 
 export interface Entrada {
   id: number;
-  colaborador: Colaborador | null;
+  rh_func_chapa: string;
+  funcionario_nome: string | null;
   motivo: string;
   horario_registrado: string;
   tipo: string;
+  data_registro: string;
 }
+

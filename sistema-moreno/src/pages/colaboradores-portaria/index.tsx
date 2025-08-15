@@ -14,7 +14,7 @@ export const ColaboradoresPortaria = () => {
 
    const fetchEntradas = async () => {
       try{
-         const response = await api.get("/api/Port_Colaborador/");
+         const response = await api.get("/api/portariaColaborador/");
          setEntradas(response.data);
       } catch (error) {
          console.error("Erro ao buscar entradas:", error);

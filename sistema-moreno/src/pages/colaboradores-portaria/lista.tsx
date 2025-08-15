@@ -1,7 +1,5 @@
 
 import type { Entrada } from "@/@types/types-entrada";
-import api from "@/axios/api";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,

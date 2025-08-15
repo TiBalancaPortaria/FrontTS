@@ -9,9 +9,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface Colaborador {
-  id: number;
-  nome: string;
+interface Funcionario {
+  fun_chapa: string;
+  fun_nome: string;
 }
 
 interface CadastroEntradaProps {
@@ -19,44 +19,45 @@ interface CadastroEntradaProps {
 }
 
 export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntradaProps) {
-  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
-  const [colaboradorIdSelecionado, setColaboradorIdSelecionado] = useState<number | null>(null);
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
+  const [colaboradorSelecionado, setColaboradorSelecionado] = useState<Funcionario | null>(null);
   const [buscaColaborador, setBuscaColaborador] = useState("");
   const [tipo, setTipo] = useState("");
   const [horarioRegistrado, setHorarioRegistrado] = useState("");
   const [motivo, setMotivo] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Buscar colaboradores
+  // Buscar funcionários
   useEffect(() => {
-    async function fetchColaboradores() {
+    async function fetchFuncionarios() {
       try {
-        const response = await api.get("/api/Colaborador/");
-        setColaboradores(response.data);
+        const response = await api.get("/api/rhfuncionarios/");
+        setFuncionarios(response.data);
       } catch (error) {
-        console.error("Erro ao buscar colaboradores:", error);
+        console.error("Erro ao buscar funcionários:", error);
       }
     }
-    fetchColaboradores();
+    fetchFuncionarios();
   }, []);
 
-  const colaboradoresFiltrados = colaboradores.filter((colab) =>
-    colab.nome.toLowerCase().includes(buscaColaborador.toLowerCase())
-  );
+  const filteredFuncionarios = buscaColaborador
+    ? funcionarios.filter(f => f.fun_nome?.toLowerCase().includes(buscaColaborador.toLowerCase()))
+    : [];
 
-  const handleSelectColaborador = (colab: Colaborador) => {
-    setColaboradorIdSelecionado(colab.id);
-    setBuscaColaborador(colab.nome);
+  const handleSelectColaborador = (f: Funcionario) => {
+    setColaboradorSelecionado(f);
+    setBuscaColaborador(f.fun_nome);
+    setShowDropdown(false); // fecha o select
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validações
-    if (!colaboradorIdSelecionado) {
+    if (!colaboradorSelecionado) {
       alert("Selecione um colaborador.");
       return;
     }
-    if (!tipo){
+    if (!tipo) {
       alert("Selecione um tipo de registro.");
       return;
     }
@@ -66,23 +67,22 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
     }
 
     try {
-      await api.post("/api/Port_Colaborador/", {
-        colaborador_id: colaboradorIdSelecionado,
-        motivo: motivo,
-        tipo: tipo,
-        horario_registrado: new Date(horarioRegistrado).toISOString()
+      await api.post("/api/portariaColaborador/", {
+        rh_func_chapa: colaboradorSelecionado.fun_chapa,
+        motivo,
+        tipo,
+        horario_registrado: new Date(horarioRegistrado).toISOString(),
       });
 
       alert("Registro salvo com sucesso!");
-      // Resetar campos
-      setColaboradorIdSelecionado(null);
+      setColaboradorSelecionado(null);
       setBuscaColaborador("");
       setMotivo("");
       setTipo("");
       setHorarioRegistrado("");
       onEntradaCadastrada();
     } catch (error: any) {
-      console.error("Erro ao cadastrar:", error.response?.data);
+      console.error("Erro ao cadastrar:", error.response?.data || error);
       alert("Erro ao cadastrar entrada.");
     }
   };
@@ -101,19 +101,22 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
               <Input
                 type="text"
                 value={buscaColaborador}
-                onChange={(e) => setBuscaColaborador(e.target.value)}
+                onChange={e => {
+                  setBuscaColaborador(e.target.value);
+                  setShowDropdown(true);
+                }}
                 placeholder="Digite para buscar..."
                 className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
               />
-              {buscaColaborador && colaboradoresFiltrados.length > 0 && (
+              {showDropdown && filteredFuncionarios.length > 0 && (
                 <ul className="absolute z-10 bg-white dark:bg-gray-950 border w-full mt-1 max-h-40 overflow-auto rounded shadow">
-                  {colaboradoresFiltrados.map((colab) => (
+                  {filteredFuncionarios.map(f => (
                     <li
-                      key={colab.id}
+                      key={f.fun_chapa}
                       className="px-3 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
-                      onClick={() => handleSelectColaborador(colab)}
+                      onClick={() => handleSelectColaborador(f)}
                     >
-                      {colab.nome}
+                      {f.fun_nome}
                     </li>
                   ))}
                 </ul>
@@ -124,7 +127,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
             <Input
               type="text"
               value={motivo}
-              onChange={(e) => setMotivo(e.target.value)}
+              onChange={e => setMotivo(e.target.value)}
               required
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             />
@@ -133,7 +136,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
             <Input
               type="datetime-local"
               value={horarioRegistrado}
-              onChange={(e) => setHorarioRegistrado(e.target.value)}
+              onChange={e => setHorarioRegistrado(e.target.value)}
               required
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             />
@@ -141,7 +144,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
             <label>Tipo:</label>
             <select
               value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
+              onChange={e => setTipo(e.target.value)}
               required
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             >
