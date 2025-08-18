@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { parseISO, format } from "date-fns";
 import { ModeToggle } from "@/components/mode-toggle";
+import * as XLSX from "xlsx";
 
 interface Colaborador {
   id: number;
@@ -20,6 +21,7 @@ interface Colaborador {
 
 interface Entrada {
   id: number;
+  rh_func_chapa: string;
   colaborador: Colaborador;
   horario_registrado: string;
   data_registro: string;
@@ -64,6 +66,29 @@ export default function ConsultaEntradas() {
       window.history.back();
   };
 
+  const exportarExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(
+    entradasFiltradas.map((e) => ({
+      Crachá: e.rh_func_chapa,
+      Nome: e.colaborador?.nome ?? "Desconhecido",
+      Motivo: e.motivo,
+      Tipo: e.tipo,
+      Data: e.horario_registrado
+        ? format(parseISO(e.horario_registrado), "dd/MM/yyyy")
+        : "—",
+      Hora: e.horario_registrado
+        ? format(parseISO(e.horario_registrado), "HH:mm")
+        : "—",
+      "Data Registro": e.data_registro
+        ? format(parseISO(e.data_registro), "dd/MM/yyyy HH:mm")
+        : "—",
+    }))
+  );
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Entradas");
+  XLSX.writeFile(workbook, "entradas.xlsx");
+};
+
   return (
     <div className=" bg-slate-300 dark:bg-gray-800">
       <nav className="flex justify-center items-center p-4 bg-gray-200 dark:bg-gray-700 relative">
@@ -96,6 +121,7 @@ export default function ConsultaEntradas() {
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-400 dark:bg-gray-600">
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Crachá</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Colaborador</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Data</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Hora</TableHead>
@@ -106,7 +132,9 @@ export default function ConsultaEntradas() {
         </TableHeader>
         <TableBody>
           {entradasFiltradas.map((entrada) => (
+            
             <TableRow key={entrada.id}>
+              <TableCell>{entrada.rh_func_chapa}</TableCell>
               <TableCell>{entrada.colaborador?.nome ?? "Desconhecido"}</TableCell>
 
               {/* Horário escolhido pelo usuário */}
@@ -134,6 +162,11 @@ export default function ConsultaEntradas() {
           ))}
         </TableBody>
       </Table>
+
+      <Button onClick={exportarExcel} className="mt-4">
+        Exportar para Excel
+      </Button>
+      
     </div>
   );
 }
