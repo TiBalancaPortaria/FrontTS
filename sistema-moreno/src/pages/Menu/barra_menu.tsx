@@ -51,27 +51,10 @@ export default function Barra_Menu() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="w-50 h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">Administrador</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel className="text-2xl">Administrador</DropdownMenuLabel>
-            <DropdownMenuGroup>
-              <DropdownMenuItem className="Drop-Item">
-                Cartão Moreno
-              </DropdownMenuItem>
-              <DropdownMenuItem className="Drop-Item">
-                Colaboradores Moreno
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="w-50 h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">RH</Button>
+            <Button className="w-80 h-14 cursor-pointer hover:bg-red-500 text-3xl font-bold">RH</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel className="text-2xl">RH</DropdownMenuLabel>
