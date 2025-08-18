@@ -101,22 +101,28 @@ export default function ConsultaEntradas() {
          </div>
       </nav>
 
-      <div className="flex gap-4 mb-6 p-5">
-        <Input
-          type="text"
-          placeholder="Buscar por nome..."
-          value={buscaNome}
-          onChange={(e) => setBuscaNome(e.target.value)}
-          className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
-        />
-        <Input
-          type="date"
-          value={dataFiltro}
-          onChange={(e) => setDataFiltro(e.target.value)}
-          className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950 w-1/2"
-        />
-        <Button onClick={fetchEntradas}>Atualizar</Button>
+      <div className="flex relative flex-row justify-center items-center gap-4 p-4">
+        <div className="flex gap-4 ">
+          <Input
+            type="text"
+            placeholder="Buscar por nome..."
+            value={buscaNome}
+            onChange={(e) => setBuscaNome(e.target.value)}
+            className="border px-3 py-2 w-96 rounded text-black dark:text-white dark:bg-gray-950"
+          />
+          <Input
+            type="date"
+            value={dataFiltro}
+            onChange={(e) => setDataFiltro(e.target.value)}
+            className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950 w-80"
+          />
+          <Button onClick={fetchEntradas}>Atualizar</Button>
+        </div>
+          <Button onClick={exportarExcel} className="">
+            Exportar para Excel
+          </Button>
       </div>
+      
 
       <Table>
         <TableHeader>
@@ -163,9 +169,7 @@ export default function ConsultaEntradas() {
         </TableBody>
       </Table>
 
-      <Button onClick={exportarExcel} className="mt-4">
-        Exportar para Excel
-      </Button>
+      
       
     </div>
   );

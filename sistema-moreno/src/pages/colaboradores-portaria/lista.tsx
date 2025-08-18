@@ -41,6 +41,9 @@ const entradasVisiveis = entradas.slice(0, itensVisiveis);
         <TableHeader>
           <TableRow className="bg-gray-400 dark:bg-gray-600">
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">
+              Crachá
+            </TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">
               Colaborador
             </TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">
@@ -61,6 +64,9 @@ const entradasVisiveis = entradas.slice(0, itensVisiveis);
         <TableBody>
           {entradasVisiveis.map((entrada) => (
             <TableRow key={entrada.id}>
+              <TableCell className="text-gray-600 dark:text-gray-300">
+                {entrada.rh_func_chapa}
+              </TableCell>
               <TableCell className="text-gray-600 dark:text-gray-300">
                 {entrada.colaborador?.nome ?? "Desconhecido"}
               </TableCell>
