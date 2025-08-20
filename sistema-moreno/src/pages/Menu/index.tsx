@@ -7,7 +7,8 @@ export function Menu() {
   return (
     <>
       <Helmet>
-        <title>Sistema Moreno</title>
+        <title>MENU</title>
+        <meta name="description" content="Página de login do sistema" />
       </Helmet>
 
       <header className="bg-slate-400 dark:bg-gray-700 h-screen flex flex-col">

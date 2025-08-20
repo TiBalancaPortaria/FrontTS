@@ -27,44 +27,40 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
   const [motivo, setMotivo] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Buscar funcionários
+  // Buscar funcionários sempre que a busca mudar
   useEffect(() => {
     async function fetchFuncionarios() {
       try {
-        const response = await api.get("/api/rhfuncionarios/");
+        if (!buscaColaborador.trim()) {
+          setFuncionarios([]);
+          return;
+        }
+        const response = await api.get(`/api/rhfuncionarios/?search=${buscaColaborador}`);
         setFuncionarios(response.data);
       } catch (error) {
         console.error("Erro ao buscar funcionários:", error);
       }
     }
     fetchFuncionarios();
-  }, []);
+  }, [buscaColaborador]);
 
-  const filteredFuncionarios = buscaColaborador
-    ? funcionarios.filter(f => f.fun_nome?.toLowerCase().includes(buscaColaborador.toLowerCase()))
-    : [];
+  const filteredFuncionarios = funcionarios.filter(f =>
+    f.fun_nome.toLowerCase().includes(buscaColaborador.toLowerCase()) ||
+    f.fun_chapa.includes(buscaColaborador)
+  );
 
   const handleSelectColaborador = (f: Funcionario) => {
     setColaboradorSelecionado(f);
     setBuscaColaborador(f.fun_nome);
-    setShowDropdown(false); // fecha o select
+    setShowDropdown(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!colaboradorSelecionado) {
-      alert("Selecione um colaborador.");
-      return;
-    }
-    if (!tipo) {
-      alert("Selecione um tipo de registro.");
-      return;
-    }
-    if (!horarioRegistrado) {
-      alert("Informe o horário de registro.");
-      return;
-    }
+    if (!colaboradorSelecionado) return alert("Selecione um colaborador.");
+    if (!tipo) return alert("Selecione um tipo de registro.");
+    if (!horarioRegistrado) return alert("Informe o horário de registro.");
 
     try {
       await api.post("/api/portariaColaborador/", {
@@ -92,9 +88,11 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
       <DialogTrigger className="bg-blue-500 text-white px-4 py-2 rounded">
         Cadastrar Entrada
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Cadastrar Entrada</DialogTitle>
+
           <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
             <label>Nome:</label>
             <div className="relative">
@@ -104,6 +102,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
                 onChange={e => {
                   setBuscaColaborador(e.target.value);
                   setShowDropdown(true);
+                  setColaboradorSelecionado(null); // resetar seleção anterior
                 }}
                 placeholder="Digite para buscar..."
                 className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
@@ -116,7 +115,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
                       className="px-3 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                       onClick={() => handleSelectColaborador(f)}
                     >
-                      {f.fun_nome}
+                      {f.fun_nome} ({f.fun_chapa})
                     </li>
                   ))}
                 </ul>
