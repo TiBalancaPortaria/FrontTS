@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 interface Funcionario {
   fun_chapa: string;
   fun_nome: string;
+  fun_status: string;
 }
 
 export default function ListaColaboradores({ filter }: { filter: string }) {
@@ -53,6 +54,7 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
           <TableRow className="bg-gray-400 dark:bg-gray-600">
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Nome</TableHead>
             <TableHead className="text-lg text-gray-600 dark:text-gray-300">Crachá</TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -60,6 +62,7 @@ export default function ListaColaboradores({ filter }: { filter: string }) {
             <TableRow key={funcionario.fun_chapa} className="hover:bg-gray-200 dark:hover:bg-gray-700">
               <TableCell className="text-gray-700 dark:text-gray-200">{funcionario.fun_nome}</TableCell>
               <TableCell className="text-gray-700 dark:text-gray-200">{funcionario.fun_chapa}</TableCell>
+              <TableCell>{funcionario.fun_status}</TableCell> 
             </TableRow>
           ))}
         </TableBody>

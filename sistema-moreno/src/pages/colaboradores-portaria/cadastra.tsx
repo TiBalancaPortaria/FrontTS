@@ -36,7 +36,8 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
           return;
         }
         const response = await api.get(`/api/rhfuncionarios/?search=${buscaColaborador}`);
-        setFuncionarios(response.data);
+        const ativos = response.data.filter(f => f.fun_status === 'A'); // apenas ativos
+      setFuncionarios(ativos);
       } catch (error) {
         console.error("Erro ao buscar funcionários:", error);
       }

@@ -89,6 +89,17 @@ export default function ConsultaEntradas() {
   XLSX.writeFile(workbook, "entradas.xlsx");
 };
 
+
+const [itensVisiveis, setItensVisiveis] = useState(15);
+const loadMore = () => {
+  setItensVisiveis((prev) => prev + 15);
+  setTimeout(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }, 100);
+};
+
+const cadastrosVisiveis = entradasFiltradas.slice(0, itensVisiveis);
+
   return (
     <div className=" bg-slate-300 dark:bg-gray-800">
       <nav className="flex justify-center items-center p-4 bg-gray-200 dark:bg-gray-700 relative">
@@ -137,7 +148,7 @@ export default function ConsultaEntradas() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {entradasFiltradas.map((entrada) => (
+          {cadastrosVisiveis.map((entrada) => (
             
             <TableRow key={entrada.id}>
               <TableCell>{entrada.rh_func_chapa}</TableCell>
@@ -168,7 +179,16 @@ export default function ConsultaEntradas() {
           ))}
         </TableBody>
       </Table>
-
+      {itensVisiveis < entradasFiltradas.length && (
+        <div className="flex justify-center mt-4">
+          <Button
+            onClick={loadMore}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Carregar mais
+          </Button>
+        </div>
+      )}
       
       
     </div>
