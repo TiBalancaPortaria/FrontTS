@@ -27,8 +27,14 @@ export default function Barra_Menu() {
     navigate('/rh/CadColaboradores');
   }
   const handlePortariaColaboradoresClick = () => {
-    navigate('/Portaria/Colaboradores');
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/Portaria/Colaboradores");
+  } else {
+    navigate("/", { state: { message: "Você precisa estar logado." } });
   }
+};
 
   return (
     <div>
@@ -44,7 +50,7 @@ export default function Barra_Menu() {
                 Cartão Portaria
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="Drop-Item" onClick={handlePortariaColaboradoresClick}>
+              <DropdownMenuItem className="Drop-Item" onSelect={handlePortariaColaboradoresClick}>
                 Colaboradores Moreno
               </DropdownMenuItem>
 
@@ -69,6 +75,8 @@ export default function Barra_Menu() {
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>
+
+      
     </div>
   )
 }
