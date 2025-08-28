@@ -5,13 +5,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { data } from "react-router-dom";
 
 interface Funcionario {
   fun_chapa: string;
   fun_nome: string;
+  fun_status?: string;
 }
 
 interface CadastroEntradaProps {
@@ -29,7 +32,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
 
   const dropdownRef = useRef<HTMLUListElement>(null);
 
-  // Fechar dropdown ao clicar fora
+  // Fecha dropdown ao clicar fora
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -40,27 +43,28 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Buscar funcionários
   useEffect(() => {
-    async function fetchFuncionarios() {
-      if (buscaColaborador.trim().length < 2) {
-        setFuncionarios([]);
-        return;
-      }
-      try {
-        const response = await api.get(`/api/rhfuncionarios/?nome=${buscaColaborador}`);
-        const ativos = response.data.filter(f => f.fun_status === 'A');
-        setFuncionarios(ativos);
-      } catch (error) {
-        console.error("Erro ao buscar funcionários:", error);
-      }
+  async function fetchFuncionarios() {
+    if (buscaColaborador.trim().length < 1) {
+      setFuncionarios([]);
+      return;
     }
-    fetchFuncionarios();
-  }, [buscaColaborador]);
+    try {
+      const response = await api.get(`/api/rhfuncionarios/?nome=${buscaColaborador}`);
+      console.log("response.data completa:", response.data);
 
-  const filteredFuncionarios = funcionarios.filter(f =>
-    f.fun_nome.toLowerCase().includes(buscaColaborador.toLowerCase()) ||
-    f.fun_chapa.includes(buscaColaborador)
-  );
+      // A lista real está em response.data.results
+      const dataArray = response.data.results || [];
+      const ativos = dataArray.filter((f: Funcionario) => f.fun_status === "A");
+      setFuncionarios(ativos);
+    } catch (error) {
+      console.error("Erro ao buscar funcionários:", error);
+      setFuncionarios([]);
+    }
+  }
+  fetchFuncionarios();
+}, [buscaColaborador]);
 
   const handleSelectColaborador = (f: Funcionario) => {
     setColaboradorSelecionado(f);
@@ -83,7 +87,6 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
       });
 
       alert("Registro salvo com sucesso!");
-      // Resetar estados
       setColaboradorSelecionado(null);
       setBuscaColaborador("");
       setMotivo("");
@@ -105,6 +108,9 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Cadastrar Entrada</DialogTitle>
+          <DialogDescription>
+            Preencha os campos abaixo para registrar a entrada ou saída de um colaborador.
+          </DialogDescription>
 
           <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
             {/* Busca colaborador */}
@@ -121,20 +127,24 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
                 placeholder="Digite para buscar..."
                 className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
               />
-              {showDropdown && filteredFuncionarios.length > 0 && (
+              {showDropdown && (
                 <ul
                   ref={dropdownRef}
                   className="absolute z-10 bg-white dark:bg-gray-950 border w-full mt-1 max-h-40 overflow-auto rounded shadow"
                 >
-                  {filteredFuncionarios.map(f => (
-                    <li
-                      key={f.fun_chapa}
-                      className="px-3 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
-                      onClick={() => handleSelectColaborador(f)}
-                    >
-                      {f.fun_nome} ({f.fun_chapa})
-                    </li>
-                  ))}
+                  {funcionarios.length > 0 ? (
+                    funcionarios.map(f => (
+                      <li
+                        key={f.fun_chapa}
+                        className="px-3 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                        onClick={() => handleSelectColaborador(f)}
+                      >
+                        {f.fun_nome} ({f.fun_chapa})
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-3 py-2 text-gray-500">Nenhum resultado</li>
+                  )}
                 </ul>
               )}
             </div>
