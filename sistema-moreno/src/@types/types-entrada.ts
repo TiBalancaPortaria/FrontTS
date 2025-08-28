@@ -9,12 +9,9 @@ export interface Colaborador {
 export interface Entrada {
   id: number;
   rh_func_chapa: string;
-  colaborador: {
-    nome: string;
-  } | null;
+  colaborador?: string | null; // string direto
   motivo: string;
   horario_registrado: string;
   tipo: string;
   data_registro: string;
 }
-

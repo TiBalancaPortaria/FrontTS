@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "@/axios/api";
 import {
   DialogContent,
@@ -27,17 +27,29 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
   const [motivo, setMotivo] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Buscar funcionários sempre que a busca mudar
+  const dropdownRef = useRef<HTMLUListElement>(null);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   useEffect(() => {
     async function fetchFuncionarios() {
+      if (buscaColaborador.trim().length < 2) {
+        setFuncionarios([]);
+        return;
+      }
       try {
-        if (!buscaColaborador.trim()) {
-          setFuncionarios([]);
-          return;
-        }
-        const response = await api.get(`/api/rhfuncionarios/?search=${buscaColaborador}`);
-        const ativos = response.data.filter(f => f.fun_status === 'A'); // apenas ativos
-      setFuncionarios(ativos);
+        const response = await api.get(`/api/rhfuncionarios/?nome=${buscaColaborador}`);
+        const ativos = response.data.filter(f => f.fun_status === 'A');
+        setFuncionarios(ativos);
       } catch (error) {
         console.error("Erro ao buscar funcionários:", error);
       }
@@ -58,7 +70,6 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!colaboradorSelecionado) return alert("Selecione um colaborador.");
     if (!tipo) return alert("Selecione um tipo de registro.");
     if (!horarioRegistrado) return alert("Informe o horário de registro.");
@@ -72,6 +83,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
       });
 
       alert("Registro salvo com sucesso!");
+      // Resetar estados
       setColaboradorSelecionado(null);
       setBuscaColaborador("");
       setMotivo("");
@@ -95,6 +107,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
           <DialogTitle>Cadastrar Entrada</DialogTitle>
 
           <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
+            {/* Busca colaborador */}
             <label>Nome:</label>
             <div className="relative">
               <Input
@@ -103,13 +116,16 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
                 onChange={e => {
                   setBuscaColaborador(e.target.value);
                   setShowDropdown(true);
-                  setColaboradorSelecionado(null); // resetar seleção anterior
+                  setColaboradorSelecionado(null);
                 }}
                 placeholder="Digite para buscar..."
                 className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
               />
               {showDropdown && filteredFuncionarios.length > 0 && (
-                <ul className="absolute z-10 bg-white dark:bg-gray-950 border w-full mt-1 max-h-40 overflow-auto rounded shadow">
+                <ul
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white dark:bg-gray-950 border w-full mt-1 max-h-40 overflow-auto rounded shadow"
+                >
                   {filteredFuncionarios.map(f => (
                     <li
                       key={f.fun_chapa}
@@ -123,6 +139,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
               )}
             </div>
 
+            {/* Motivo */}
             <label>Motivo:</label>
             <Input
               type="text"
@@ -132,6 +149,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             />
 
+            {/* Horário */}
             <label>Horário:</label>
             <Input
               type="datetime-local"
@@ -141,6 +159,7 @@ export default function CadastroEntrada({ onEntradaCadastrada }: CadastroEntrada
               className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950"
             />
 
+            {/* Tipo */}
             <label>Tipo:</label>
             <select
               value={tipo}

@@ -17,19 +17,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState("");
 
-  // Se a navegação trouxe mensagem, exibe no alerta
   useEffect(() => {
-  if (location.state?.message) {
-    setAlert(location.state.message);
-
-    // Limpa a mensagem depois para evitar reaparecer no refresh
-    navigate(location.pathname, { replace: true });
-  }
-}, [location.state, navigate, location.pathname]);
+    if (location.state?.message) {
+      setAlert(location.state.message);
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, navigate, location.pathname]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       await signIn({ email, password });
       navigate("/menu");
@@ -42,7 +38,6 @@ export default function LoginPage() {
     <main>
       <Helmet>Login</Helmet>
       <div className="flex flex-row">
-        {/* Lado esquerdo */}
         <div className="relative w-1/2 h-screen bg-slate-300 dark:bg-slate-700 pl-3 pt-3">
           <div className="absolute top-0 left-0 m-3">
             <ModeToggle />
@@ -51,34 +46,25 @@ export default function LoginPage() {
             <img src={logoMoreno} alt="Logo" />
           </div>
         </div>
-
-        {/* Lado direito */}
         <div className="w-1/2 flex flex-col justify-center items-center gap-5 h-screen bg-gray-300 dark:bg-slate-800">
           <label className="text-4xl font-mono font-bold">Login</label>
-          <form
-            className="flex flex-col justify-center items-center gap-5"
-            onSubmit={handleSubmit}
-          >
+          <form className="flex flex-col justify-center items-center gap-5" onSubmit={handleSubmit}>
             <Input
               type="email"
               placeholder="Email"
               className="w-[20rem] h-[3.125rem] font-mono text-xl focus:border-red-800 border-black"
               onChange={(e) => setEmail(e.target.value)}
             />
-
             <Input
               type="password"
               placeholder="Senha"
               className="w-[20rem] h-[3.125rem] font-mono text-xl focus:border-red-800 border-black"
               onChange={(e) => setPassword(e.target.value)}
             />
-
             <Button className="font-mono text-xl font-bold" type="submit">
               Entrar
             </Button>
           </form>
-
-          {/* Exibe alerta se houver */}
           {alert && (
             <Alert variant="destructive" className="mt-4 w-[20rem]">
               <AlertTitle>Atenção</AlertTitle>

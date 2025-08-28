@@ -27,7 +27,7 @@ export default function Barra_Menu() {
     navigate('/rh/CadColaboradores');
   }
   const handlePortariaColaboradoresClick = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   if (token) {
     navigate("/Portaria/Colaboradores");
@@ -50,7 +50,7 @@ export default function Barra_Menu() {
                 Cartão Portaria
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="Drop-Item" onSelect={handlePortariaColaboradoresClick}>
+              <DropdownMenuItem className="Drop-Item" onClick={handlePortariaColaboradoresClick}>
                 Colaboradores Moreno
               </DropdownMenuItem>
 

@@ -18,57 +18,93 @@ interface Funcionario {
 
 export default function ListaColaboradores({ filter }: { filter: string }) {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const fetchFuncionarios = async () => {
+  const fetchFuncionarios = async (pageNumber: number = 1) => {
     try {
-      const response = await api.get("/api/rhfuncionarios/");
-      setFuncionarios(response.data);
+      setLoading(true);
+
+      const response = await api.get("/api/rhfuncionarios/", {
+        params: {
+          nome: filter || undefined,
+          page: pageNumber,
+        },
+      });
+
+      const results = Array.isArray(response.data.results)
+        ? response.data.results
+        : [];
+
+      setFuncionarios(prev =>
+        pageNumber === 1 ? results : [...prev, ...results]
+      );
+
+      const totalCount = response.data.count || results.length;
+      const pageSize = results.length || 50; // page_size definido no backend
+      setTotalPages(Math.ceil(totalCount / pageSize));
     } catch (error) {
       console.error("Erro ao buscar Funcionarios:", error);
+      setFuncionarios([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Recarrega sempre que o filtro mudar
   useEffect(() => {
-    fetchFuncionarios();
-  }, []);
+    setPage(1);
+    fetchFuncionarios(1);
+  }, [filter]);
 
-  const filteredFuncionarios = funcionarios.filter((f) =>
-    f.fun_nome.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  const [itensVisiveis, setItensVisiveis] = useState(12);
-
+  // Carregar próxima página
   const loadMore = () => {
-    setItensVisiveis((prev) => prev + 12);
-    setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }, 100);
+    const nextPage = page + 1;
+    if (nextPage <= totalPages) {
+      setPage(nextPage);
+      fetchFuncionarios(nextPage);
+    }
   };
-
-  const colaboradoresVisiveis = filteredFuncionarios.slice(0, itensVisiveis);
 
   return (
     <div className="p-6">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-400 dark:bg-gray-600">
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Nome</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Crachá</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Status</TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">
+              Nome
+            </TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">
+              Crachá
+            </TableHead>
+            <TableHead className="text-lg text-gray-600 dark:text-gray-300">
+              Status
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {colaboradoresVisiveis.map((funcionario) => (
-            <TableRow key={funcionario.fun_chapa} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-              <TableCell className="text-gray-700 dark:text-gray-200">{funcionario.fun_nome}</TableCell>
-              <TableCell className="text-gray-700 dark:text-gray-200">{funcionario.fun_chapa}</TableCell>
-              <TableCell>{funcionario.fun_status}</TableCell> 
+          {funcionarios.map(funcionario => (
+            <TableRow
+              key={funcionario.fun_chapa}
+              className="hover:bg-gray-200 dark:hover:bg-gray-700"
+            >
+              <TableCell className="text-gray-700 dark:text-gray-200">
+                {funcionario.fun_nome}
+              </TableCell>
+              <TableCell className="text-gray-700 dark:text-gray-200">
+                {funcionario.fun_chapa}
+              </TableCell>
+              <TableCell>{funcionario.fun_status}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      {itensVisiveis < filteredFuncionarios.length && (
+      {loading && <p className="mt-2">Carregando...</p>}
+
+      {page < totalPages && !loading && (
         <div className="flex justify-center mt-4">
           <Button onClick={loadMore}>Carregar mais</Button>
         </div>
