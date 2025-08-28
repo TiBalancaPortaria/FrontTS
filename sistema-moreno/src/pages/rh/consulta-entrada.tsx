@@ -13,107 +13,95 @@ import {
 import { parseISO, format } from "date-fns";
 import { ModeToggle } from "@/components/mode-toggle";
 import * as XLSX from "xlsx";
+import type { Entrada } from "@/@types/types-entrada";
 
-interface Colaborador {
-  id: number;
-  nome: string;
+
+
+interface ListaDeEntradasProps {
+  entradas: Entrada[];
+  filtro?: string;
+  onAtualizar?: () => void;
 }
 
-interface Entrada {
-  id: number;
-  rh_func_chapa: string;
-  colaborador: Colaborador;
-  horario_registrado: string;
-  data_registro: string;
-  tipo: string;
-  motivo: string;
-}
-
-export default function ConsultaEntradas() {
-  const [entradas, setEntradas] = useState<Entrada[]>([]);
+export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntradasProps) {
+  const [entradas, setEntradas] = useState<Entrada[]>(entradasProp || []);
   const [buscaNome, setBuscaNome] = useState("");
   const [dataFiltro, setDataFiltro] = useState("");
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [temMais, setTemMais] = useState(true);
+  const [carregando, setCarregando] = useState(false);
 
-  // Buscar entradas do backend
-  const fetchEntradas = async () => {
+  const fetchEntradas = async (pagina = 1, reset = false) => {
     try {
-      const response = await api.get("/api/portariaColaborador/");
-      setEntradas(response.data);
+      setCarregando(true);
+      const params: any = { page: pagina, page_size: 15 };
+      if (buscaNome) params.nome = buscaNome;
+      if (dataFiltro) params.data = dataFiltro;
+
+      const response = await api.get("/api/portariaColaborador/", { params });
+      const dados = response.data.results;
+
+      if (reset) setEntradas(dados);
+      else setEntradas((prev) => [...prev, ...dados]);
+
+      setTemMais(Boolean(response.data.next));
+      setPaginaAtual(pagina);
     } catch (error) {
       console.error("Erro ao buscar entradas:", error);
+    } finally {
+      setCarregando(false);
     }
   };
 
   useEffect(() => {
-    fetchEntradas();
+    fetchEntradas(1, true);
   }, []);
 
-  // Filtrando por nome e data
-  const entradasFiltradas = entradas.filter((entrada) => {
-    const nomeMatch = entrada.colaborador?.nome
-      .toLowerCase()
-      .includes(buscaNome.toLowerCase());
-
-    const dataMatch = dataFiltro
-      ? format(parseISO(entrada.horario_registrado), "yyyy-MM-dd") === dataFiltro
-    : true;
-
-    return nomeMatch && dataMatch;
-  });
-
-
-  const handleVoltar = () => {
-      window.history.back();
+  const loadMore = () => {
+    if (temMais && !carregando) fetchEntradas(paginaAtual + 1);
   };
 
+  const handleFiltrar = () => fetchEntradas(1, true);
+
+  const handleVoltar = () => window.history.back();
+
   const exportarExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(
-    entradasFiltradas.map((e) => ({
-      Crachá: e.rh_func_chapa,
-      Nome: e.colaborador?.nome ?? "Desconhecido",
-      Motivo: e.motivo,
-      Tipo: e.tipo,
-      Data: e.horario_registrado
-        ? format(parseISO(e.horario_registrado), "dd/MM/yyyy")
-        : "—",
-      Hora: e.horario_registrado
-        ? format(parseISO(e.horario_registrado), "HH:mm")
-        : "—",
-      "Data Registro": e.data_registro
-        ? format(parseISO(e.data_registro), "dd/MM/yyyy HH:mm")
-        : "—",
-    }))
-  );
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Entradas");
-  XLSX.writeFile(workbook, "entradas.xlsx");
-};
-
-
-const [itensVisiveis, setItensVisiveis] = useState(15);
-const loadMore = () => {
-  setItensVisiveis((prev) => prev + 15);
-  setTimeout(() => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }, 100);
-};
-
-const cadastrosVisiveis = entradasFiltradas.slice(0, itensVisiveis);
+    const worksheet = XLSX.utils.json_to_sheet(
+      entradas.map((e) => ({
+        Crachá: e.rh_func_chapa,
+        Nome: e.colaborador ?? "Desconhecido",
+        Motivo: e.motivo,
+        Tipo: e.tipo,
+        Data: e.horario_registrado
+          ? format(parseISO(e.horario_registrado), "dd/MM/yyyy")
+          : "—",
+        Hora: e.horario_registrado
+          ? format(parseISO(e.horario_registrado), "HH:mm")
+          : "—",
+        "Data Registro": e.data_registro
+          ? format(parseISO(e.data_registro), "dd/MM/yyyy HH:mm")
+          : "—",
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Entradas");
+    XLSX.writeFile(workbook, "entradas.xlsx");
+  };
 
   return (
-    <div className=" bg-slate-300 dark:bg-gray-800">
+    <div className="bg-slate-300 dark:bg-gray-800">
       <nav className="flex justify-center items-center p-4 bg-gray-200 dark:bg-gray-700 relative">
-         <h1 className="text-4xl font-bold mb-4 text-red-500">Consulta de Entradas</h1>
-         <div className="absolute left-5">
-            <ModeToggle />
-         </div>
-         <div className="absolute right-5">
-            <Button variant="outline" onClick={handleVoltar} >Voltar</Button>
-         </div>
+        <h1 className="text-4xl font-bold mb-4 text-red-500">Consulta de Entradas</h1>
+        <div className="absolute left-5">
+          <ModeToggle />
+        </div>
+        <div className="absolute right-5">
+          <Button variant="outline" onClick={handleVoltar}>Voltar</Button>
+        </div>
       </nav>
 
       <div className="flex relative flex-row justify-center items-center gap-4 p-4">
-        <div className="flex gap-4 ">
+        <div className="flex gap-4">
           <Input
             type="text"
             placeholder="Buscar por nome..."
@@ -127,13 +115,10 @@ const cadastrosVisiveis = entradasFiltradas.slice(0, itensVisiveis);
             onChange={(e) => setDataFiltro(e.target.value)}
             className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950 w-80"
           />
-          <Button onClick={fetchEntradas}>Atualizar</Button>
+          <Button onClick={handleFiltrar}>Atualizar</Button>
         </div>
-          <Button onClick={exportarExcel} className="">
-            Exportar para Excel
-          </Button>
+        <Button onClick={exportarExcel}>Exportar para Excel</Button>
       </div>
-      
 
       <Table>
         <TableHeader>
@@ -148,49 +133,27 @@ const cadastrosVisiveis = entradasFiltradas.slice(0, itensVisiveis);
           </TableRow>
         </TableHeader>
         <TableBody>
-          {cadastrosVisiveis.map((entrada) => (
-            
+          {entradas.map((entrada) => (
             <TableRow key={entrada.id}>
               <TableCell>{entrada.rh_func_chapa}</TableCell>
-              <TableCell>{entrada.colaborador?.nome ?? "Desconhecido"}</TableCell>
-
-              {/* Horário escolhido pelo usuário */}
-              <TableCell>
-                {entrada.horario_registrado
-                  ? format(parseISO(entrada.horario_registrado), "dd/MM/yyyy")
-                  : "—"}
-              </TableCell>
-              <TableCell>
-                {entrada.horario_registrado
-                  ? format(parseISO(entrada.horario_registrado), "HH:mm")
-                  : "—"}
-              </TableCell>
-
-              {/* Data de registro no banco */}
-              <TableCell>
-                {entrada.data_registro
-                  ? format(parseISO(entrada.data_registro), "dd/MM/yyyy HH:mm")
-                  : "—"}
-              </TableCell>
-
+              <TableCell>{entrada.colaborador ?? "Desconhecido"}</TableCell>
+              <TableCell>{entrada.horario_registrado ? format(parseISO(entrada.horario_registrado), "dd/MM/yyyy") : "—"}</TableCell>
+              <TableCell>{entrada.horario_registrado ? format(parseISO(entrada.horario_registrado), "HH:mm") : "—"}</TableCell>
+              <TableCell>{entrada.data_registro ? format(parseISO(entrada.data_registro), "dd/MM/yyyy HH:mm") : "—"}</TableCell>
               <TableCell>{entrada.tipo}</TableCell>
               <TableCell>{entrada.motivo}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {itensVisiveis < entradasFiltradas.length && (
+
+      {temMais && (
         <div className="flex justify-center mt-4">
-          <Button
-            onClick={loadMore}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Carregar mais
+          <Button onClick={loadMore} className="bg-blue-500 text-white px-4 py-2 rounded">
+            {carregando ? "Carregando..." : "Carregar mais"}
           </Button>
         </div>
       )}
-      
-      
     </div>
   );
 }
