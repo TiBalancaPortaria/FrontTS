@@ -9,19 +9,19 @@ export default function Barra_Menu() {
 
   // Função para navegar para a página Cartão Portaria
   // Isso será chamado quando o usuário clicar no item do menu
-  const handleCartaoPortariaClick = () => {
+  // const handleCartaoPortariaClick = () => {
 
-    navigate('/Portaria/CartaoPortaria');
+  //   navigate('/Portaria/CartaoPortaria');
 
-    //!!!!!!!!ATIVAR ASSIM QUE ESTIVER TUDO PRONTO!!!!!!!!
+  //   //!!!!!!!!ATIVAR ASSIM QUE ESTIVER TUDO PRONTO!!!!!!!!
 
-    // const token  = localStorage.getItem('token');
-    // if (token){
-    //   navigate('/CartaoPortaria');
-    // } else {
-    //   alert('Você precisa estar logado para acessar esta página.');
-    // }
-  }
+  //   // const token  = localStorage.getItem('token');
+  //   // if (token){
+  //   //   navigate('/CartaoPortaria');
+  //   // } else {
+  //   //   alert('Você precisa estar logado para acessar esta página.');
+  //   // }
+  // }
 
   const handleCadColaboradoresClick = () => {
     navigate('/rh/CadColaboradores');
@@ -46,9 +46,9 @@ export default function Barra_Menu() {
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel className="text-2xl">Portaria</DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem className="Drop-Item" onClick={handleCartaoPortariaClick}>
+              {/* <DropdownMenuItem className="Drop-Item" onClick={handleCartaoPortariaClick}>
                 Cartão Portaria
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
 
               <DropdownMenuItem className="Drop-Item" onClick={handlePortariaColaboradoresClick}>
                 Colaboradores Moreno

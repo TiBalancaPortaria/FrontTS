@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "@/axios/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import * as XLSX from "xlsx";
 import type { Entrada } from "@/@types/types-entrada";
 
-
-
 interface ListaDeEntradasProps {
   entradas: Entrada[];
-  filtro?: string;
-  onAtualizar?: () => void;
 }
 
 export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntradasProps) {
@@ -31,11 +27,17 @@ export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntr
   const [temMais, setTemMais] = useState(true);
   const [carregando, setCarregando] = useState(false);
 
-  const fetchEntradas = async (pagina = 1, reset = false) => {
+  // Função para buscar entradas com filtros e paginação
+  const fetchEntradas = useCallback(async (pagina = 1, reset = false) => {
     try {
       setCarregando(true);
+
       const params: any = { page: pagina, page_size: 15 };
-      if (buscaNome) params.nome = buscaNome;
+
+      // Enviar nome como query param
+      if (buscaNome.trim()) params.nome = buscaNome.trim();
+
+      // Enviar data como query param
       if (dataFiltro) params.data = dataFiltro;
 
       const response = await api.get("/api/portariaColaborador/", { params });
@@ -51,17 +53,20 @@ export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntr
     } finally {
       setCarregando(false);
     }
-  };
+  }, [buscaNome, dataFiltro]);
 
+  // Debounce para atualizar tabela ao digitar nome ou escolher data
   useEffect(() => {
-    fetchEntradas(1, true);
-  }, []);
+    const delay = setTimeout(() => {
+      fetchEntradas(1, true);
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [fetchEntradas]);
 
   const loadMore = () => {
     if (temMais && !carregando) fetchEntradas(paginaAtual + 1);
   };
-
-  const handleFiltrar = () => fetchEntradas(1, true);
 
   const handleVoltar = () => window.history.back();
 
@@ -72,15 +77,9 @@ export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntr
         Nome: e.colaborador ?? "Desconhecido",
         Motivo: e.motivo,
         Tipo: e.tipo,
-        Data: e.horario_registrado
-          ? format(parseISO(e.horario_registrado), "dd/MM/yyyy")
-          : "—",
-        Hora: e.horario_registrado
-          ? format(parseISO(e.horario_registrado), "HH:mm")
-          : "—",
-        "Data Registro": e.data_registro
-          ? format(parseISO(e.data_registro), "dd/MM/yyyy HH:mm")
-          : "—",
+        Data: e.horario_registrado ? format(parseISO(e.horario_registrado), "dd/MM/yyyy") : "—",
+        Hora: e.horario_registrado ? format(parseISO(e.horario_registrado), "HH:mm") : "—",
+        "Data Registro": e.data_registro ? format(parseISO(e.data_registro), "dd/MM/yyyy HH:mm") : "—",
       }))
     );
     const workbook = XLSX.utils.book_new();
@@ -100,8 +99,8 @@ export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntr
         </div>
       </nav>
 
-      <div className="flex relative flex-row justify-center items-center gap-4 p-4">
-        <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row justify-center items-center gap-4 p-4">
+        <div className="flex gap-4 flex-wrap">
           <Input
             type="text"
             placeholder="Buscar por nome..."
@@ -115,7 +114,7 @@ export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntr
             onChange={(e) => setDataFiltro(e.target.value)}
             className="border px-3 py-2 rounded text-black dark:text-white dark:bg-gray-950 w-80"
           />
-          <Button onClick={handleFiltrar}>Atualizar</Button>
+          <Button onClick={() => fetchEntradas(1, true)}>Atualizar</Button>
         </div>
         <Button onClick={exportarExcel}>Exportar para Excel</Button>
       </div>
@@ -123,13 +122,13 @@ export default function ConsultaEntradas({ entradas: entradasProp }: ListaDeEntr
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-400 dark:bg-gray-600">
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Crachá</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Colaborador</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Data</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Hora</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Data do Registro</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Tipo</TableHead>
-            <TableHead className="text-lg text-gray-600 dark:text-gray-300">Motivo</TableHead>
+            <TableHead>Crachá</TableHead>
+            <TableHead>Colaborador</TableHead>
+            <TableHead>Data</TableHead>
+            <TableHead>Hora</TableHead>
+            <TableHead>Data do Registro</TableHead>
+            <TableHead>Tipo</TableHead>
+            <TableHead>Motivo</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
